@@ -673,3 +673,100 @@ int main(int argc, const char* argvs[]) {
 	return 1;
 }
 
+
+void execute(char *command)
+{
+	int i;
+	int status;
+
+	signal(SIGALRM,(void (*)(int))kill_child);
+	pid = fork();
+
+	if( pid == 0)
+	{
+		i = execv(command, my_argv);
+		printf("Err no. is %d\n", errno);
+		if(i < 0)
+		{
+			printf("inner exe [%s]:%s\n", command, "Command Not Found");
+			exit(1);
+		}
+	}
+	else
+	{
+		if(strcmp(timer,"on") == 0)
+			{                //timer on
+			alarm(5);
+			if(waitpid(pid, &status, 0)==pid) 
+				{
+				alarm(0);
+				// the child process complete within 5 seconds
+				}
+			}
+		else 
+			{                                       //timer off
+			wait(NULL);
+			}
+
+	}
+}
+
+
+int do_alias(char *origin_cmd)
+{
+	char *h_ptr=origin_cmd;
+	char *t_ptr=origin_cmd;
+	int index;
+
+	while(*h_ptr != ' ')
+		h_ptr++;
+	h_ptr++;
+
+	while(*t_ptr != '=')
+		t_ptr++;
+
+	for(index=0;;index++)
+	{
+		if(alias_cmd[index] == NULL)
+		{
+			alias_cmd[index] = (char *)malloc(sizeof(char) * strlen(h_ptr) + 1);
+			memset(alias_cmd[index],'\0',strlen(alias_cmd[index]));
+			break;
+		}
+	}
+
+	strncpy(alias_cmd[index],h_ptr,strlen(h_ptr)-strlen(t_ptr));
+
+	//printf("alias_cmd is:%s<<<\n",alias_cmd[index]);
+	if(Attach_path(alias_cmd[index]) == 0)
+	{
+		//printf("%s already exist! Please try other alias!!\n",alias_cmd[index]);
+		memset(alias_cmd[index],'\0',strlen(alias_cmd[index]));
+		alias_cmd[index]=NULL;
+	}
+	else
+	{
+		while(*t_ptr != '\"')
+			t_ptr++;
+
+		t_ptr++;
+		h_ptr=t_ptr;
+
+		while(*t_ptr != '\"')
+				t_ptr++;
+
+		for(index=0;;index++)	
+			{
+			if(exec_cmd[index] == NULL)
+				{
+				exec_cmd[index] = (char *)malloc(sizeof(char) * strlen(h_ptr) + 1);
+					memset(exec_cmd[index],'\0',strlen(exec_cmd[index]));
+					break;
+				}
+			}
+
+		strncpy(exec_cmd[index],h_ptr,strlen(h_ptr)-strlen(t_ptr));
+
+			//printf("exec_cmd is:%s<<<\n",exec_cmd[index]);
+	}
+}
