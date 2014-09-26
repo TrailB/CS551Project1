@@ -578,10 +578,10 @@ int main(int argc, const char* argvs[]) {
 	int len = 0;
 	signal(SIGINT, ctrlc_handler);
 	printf("\nWELCOME TO MY NEW SHELL!!\n\n");
-	printf("Project Group 2\n\n");
-	printf("Manju Muralidharan Priya\n");
-	printf("Harika Thadakamalla\n");
-	printf("Swasthi Tripathy\n");
+	printf("Project Group 1\n\n");
+	printf("Kehinde Adegoke\n");
+	printf("Jai Vijai Baskar\n");
+	printf("Sujith Pannala\n");
 	
 	setEnv();
 	printf("\n\n%s\n\n",message);
